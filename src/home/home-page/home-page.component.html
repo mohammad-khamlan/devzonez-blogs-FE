@@ -1,0 +1,74 @@
+<div class="create-post-container">
+  <button nz-button nzType="primary" (click)="openCreatePostModal()">Create Post</button>
+</div>
+
+
+<nz-modal [(nzVisible)]="isModalVisible" nzTitle="Add New Post" (nzOnCancel)="handleCancel()" [nzFooter]="null">
+  <form [formGroup]="postForm" (ngSubmit)="createPost()" *nzModalContent>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="title">Title</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <input nz-input formControlName="title" id="title" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="6" nzFor="content">Content</nz-form-label>
+      <nz-form-control [nzSpan]="18">
+        <textarea nz-input formControlName="content" id="content"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+    <div class="modal-footer">
+      <button nz-button nzType="primary" class="post-btn" [disabled]="postForm.invalid">Post</button>
+    </div>
+  </form>
+</nz-modal>
+
+
+<div class="post-container">
+  <div *ngFor="let post of posts; let postIndex = index" class="post">
+    <div class="post-header">
+      <nz-avatar nzIcon="user" nzSrc="//zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" class="avatar">
+      </nz-avatar>
+      <h2>{{ post.user.name }}</h2>
+    </div>
+    <h3>{{ post.title }}</h3>
+    <p>{{ post.content }}</p>
+    <button nz-button nzType="default" (click)="toggleCommentBox(post)">Add Comment</button>
+
+    <div *ngIf="post.showCommentBox" class="comment-box">
+      <input nz-input [(ngModel)]="post.newComment" placeholder="Write a comment..." />
+      <button nz-button nzType="primary" (click)="addComment(post, postIndex)">Submit</button>
+    </div>
+
+    <h4 *ngIf="post.comments?.length > 0">Comments:</h4>
+    <div *ngFor="let comment of post.comments" class="comment">
+      <div class="comment-header">
+        <nz-avatar nzIcon="user" nzSrc="//zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" class="avatar">
+        </nz-avatar>
+        <div>
+          <p><b>{{ comment.user.name }}</b></p>
+          <p>{{ comment.text }}</p>
+        </div>
+        <a (click)="toggleReplyBox(comment)" class="reply-action">Reply</a>
+      </div>
+
+      <div *ngIf="comment.showReplyBox" class="reply-box">
+        <input nz-input [(ngModel)]="comment.newReply" placeholder="Write a reply..." />
+        <button nz-button nzType="primary" (click)="addReply(post, comment, postIndex)">Submit</button>
+      </div>
+
+      <h5 *ngIf="comment.replies?.length > 0">Replies:</h5>
+      <div *ngFor="let reply of comment.replies" class="reply">
+        <div class="reply-header">
+          <nz-avatar nzIcon="user" nzSrc="//zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" class="avatar">
+          </nz-avatar>
+          <div>
+            <p><b>{{ reply.user.name }}</b></p>
+            <p>{{ reply.text }}</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
